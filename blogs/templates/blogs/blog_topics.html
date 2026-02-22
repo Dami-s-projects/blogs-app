@@ -1,0 +1,25 @@
+{% extends 'blogs/base.html' %}
+
+
+
+
+
+{% block content %}
+<h2>Blog Headlines</h2>
+<p>Here are all the blogs that have been posted: </p>
+<a href="{% url 'blogs:add_headline' %}">Add blog topic/headline</a>
+<br>
+<br>
+<ul>
+    {% for each_headline in blog_headlines %}
+      <li><a href="{% url 'blogs:blog_content' each_headline.id %}">{{ each_headline }}</a></li>
+    {% empty %}
+      <li>No blog has been added yet.</li>
+    {% endfor %}
+
+</ul>
+
+
+
+
+{% endblock content %}

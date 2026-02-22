@@ -1,0 +1,16 @@
+{% extends 'blogs/base.html' %}
+
+{% block content %}
+<h2>{{ connected_headline }}</h2>
+
+<p>You can edit the post here</p>
+
+<form action="{% url 'blogs:edit_entry' content.id %}" method="post">
+    {% csrf_token %}
+    {{ form.as_div }}
+    <button name="submit">Save changes</button>
+
+</form>
+
+
+{% endblock content %}

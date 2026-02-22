@@ -1,0 +1,28 @@
+{% extends 'blogs/base.html' %}
+
+
+
+
+
+{% block content %}
+<p>Here you can create your blog posts and update blogs at your convenience.</p>
+<br>
+<br>
+<p>Check out the latest posted blogs here: </p>
+<ul>
+    {% for each_headline in blog_headlines|slice:"3" %}
+      <li><a href="{% url 'blogs:blog_content' each_headline.id %}">{{ each_headline }}</a></li>
+    {% empty %}
+      <li>No blog has been added yet.</li>
+    {% endfor %}
+
+</ul>
+<br>
+<p>To see all the blog topics, click here:  <a href="{% url 'blogs:blog_topics' %}">blog topics</a></p>
+{% if not user.is_authenticated %}
+<p>To add blog posts, kindly <a href="{% url 'accounts:login' %}">login</a>.</p>
+{% endif %}
+
+
+
+{% endblock content %}

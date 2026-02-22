@@ -1,0 +1,37 @@
+{% extends 'blogs/base.html' %}
+
+{% block content %}
+<br>
+<br>
+<h2>{{ blog_headline }}</h2>
+
+{% if blog_headline.owner == user %}
+  <p><a href="{% url 'blogs:add_each_content' blog_headline.id %}">Add content</a></p>
+{% endif %}
+<ul>
+    {% for each_content in blog_content %}
+    <li>
+        <p>{{ each_content.date_added|date:'M d, Y H:i' }}</p>
+        <p>{{ each_content.text|linebreaks}}</p>
+        {% if blog_headline.owner == user %}
+        <p><a href="{% url 'blogs:edit_entry' each_content.id %}">Edit post</a></p>
+        {% endif %}
+    </li>
+    {% empty %}
+    <li>
+        <p>No content has been added to this post</p>
+    </li>
+    {% endfor %}
+
+</ul>
+
+
+
+
+
+
+
+
+
+
+{% endblock content %}

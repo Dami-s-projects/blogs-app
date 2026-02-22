@@ -1,0 +1,16 @@
+{% extends 'blogs/base.html' %}
+
+{% block content %}
+<h2>{{ blog_headline }}</h2>
+
+<p>Write the content of your post here</p>
+
+<form action="{% url 'blogs:add_each_content' blog_headline.id %}" method="post">
+    {% csrf_token %}
+    {{ form.as_div }}
+    <button name="submit">Add this post</button>
+
+</form>
+
+
+{% endblock content %}

@@ -1,0 +1,30 @@
+<p>
+    <a href="{% url 'blogs:index' %}"><h1>Blogs Web Application</h1></a>
+</p>
+
+<p><a href="{% url 'blogs:index' %}"><b>Homepage</b></a>- <a href="{% url 'blogs:blog_topics' %}"><b>All blogs</b></a>
+<a href="{% url 'accounts:register' %}"><b>-Register</b></a>
+
+
+
+    {% if user.is_authenticated %}
+      <p>Hello, {{ user.username }}</p>
+
+    {% else %}
+      <a href="{% url 'accounts:login' %}"><b>-Login</b></a>
+    
+    {% endif %}
+
+
+</p>
+
+{% block content %}
+{% endblock content %}
+
+{% if user.is_authenticated %}
+  <hr>
+  <form action="{% url 'accounts:logout' %}" method="post">
+        {% csrf_token %} {# cross site request forgery #}
+        <button name="submit">Log out</button>
+  </form>
+{% endif %}
