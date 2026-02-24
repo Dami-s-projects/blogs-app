@@ -1,27 +1,41 @@
 {% extends 'blogs/base.html' %}
 
+{% block extra_css %}
 
+{% endblock extra_css %}
 
 
 
 {% block content %}
-<p>Here you can create your blog posts and update blogs at your convenience.</p>
-<br>
-<br>
-<p>Check out the latest posted blogs here: </p>
-<ul>
+  <main class="px-3 mt-auto">
+    <h1>Welcome to Blogs App</h1>
+    <p class="lead">Here you can create your blog posts and update blogs at your convenience.</p>
+    <p class="lead">
+            <a href="{% url 'blogs:blog_topics' %}" class="btn btn-lg btn-light fw-bold border-white bg-white">Blogs</a>
+        </p>
+</main>
+<section class="px-3 mt-4 mb-auto">
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <p>Check out the latest posted blogs here: </p>
+
+  <ul class="list-unstyled">
     {% for each_headline in blog_headlines|slice:"3" %}
-      <li><a href="{% url 'blogs:blog_content' each_headline.id %}">{{ each_headline }}</a></li>
+      <li><a href="{% url 'blogs:blog_content' each_headline.id %}" class="text-white">{{ each_headline }}</a></li>
     {% empty %}
       <li>No blog has been added yet.</li>
     {% endfor %}
 
-</ul>
-<br>
-<p>To see all the blog topics, click here:  <a href="{% url 'blogs:blog_topics' %}">blog topics</a></p>
-{% if not user.is_authenticated %}
-<p>To add blog posts, kindly <a href="{% url 'accounts:login' %}">login</a>.</p>
-{% endif %}
+  </ul>
+
+</section>
+
+<footer class=" text-white-50">
+  © 2026 Blogs App
+</footer>
 
 
 
