@@ -22,12 +22,18 @@
     }
     .form-signin .form-control {
     background-color: #212529;
-    border-color: #495057;
+    border-color: #f0a500;
     color: #fff;
     }
     .form-signin .form-control:focus {
-        background-color: #2b3035;
-        border-color: #86b7fe;
+    background-color: #2b3035;
+    border-color: #f0a500;
+    color: #fff;
+    box-shadow: 0 0 15px rgba(240, 165, 0, 0.4) !important;
+}
+    .form-signin .form-control:focus {
+        background-color: #212529;
+        border-color: #f0a500;
         color: #fff;
     }
     .form-signin .form-control::placeholder {
@@ -47,7 +53,7 @@
         background-color: #2c3034;
         border-radius: 12px;
         padding: 5rem 3rem 6rem;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 0 25px rgba(240, 165, 0, 0.15);
     }
     /* Adds space between button and register link */
     .form-signin .btn {
@@ -59,10 +65,14 @@
     }
     
     .form-signin form {
-    border: 1px solid #383c42;
+    border: 1px solid #f0a500;
     background-color: #1e2125;
     }
-    
+    .form-signin input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 30px #2b3035 inset, 0 0 15px rgba(240, 165, 0, 0.4) !important;
+    -webkit-text-fill-color: #fff;
+}
+
 </style>
 {% endblock extra_css %}
 
@@ -70,8 +80,7 @@
 <main class="form-signin w-100 m-auto mt-auto mb-auto">
     <form action="{% url 'accounts:login' %}" method="post">
         {% csrf_token %}
-        <h1 class="h3 fw-bold text-light">Log into Blogs App</h1>
-
+        <h1 class="h3 fw-bold text-light text-center">Log into <span style="font-family: 'Playfair Display', serif; background-color: rgba(15, 17, 23, 0.9); padding: 0.4rem 0.6rem 0.5rem; border-radius: 4px; line-height: 1.5; display: inline-block;">Blogs<span style="color: #f0a500;">.</span></span></h1>
         {% if form.errors %}
             <div class="alert alert-danger">
                 Your username and password did not match. Please try again!
@@ -87,8 +96,8 @@
             <label for="id_password">Password</label>
         </div>
 
-        <button class="btn btn-primary w-100 py-2" type="submit">Log in</button>
-        <p class="register-link">Don't have an account? <a href="{% url 'accounts:register' %}" class="text-info">Register</a></p>
+        <button class="btn btn-warning fw-bold w-100 py-2" type="submit">Log in</button>
+        <p class="register-link">Don't have an account? <a href="{% url 'accounts:register' %}" style="color: #f0a500;">Register</a></p>
         
     </form>
 </main>
