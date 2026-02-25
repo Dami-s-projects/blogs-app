@@ -1,16 +1,232 @@
+
 {% extends 'blogs/base.html' %}
 
+{% block title %}Write — {{ blog_headline }} — Blogs App{% endblock title %}
+
+{% block extra_css %}
+<style>
+
+  /* ============================================================
+     ADD CONTENT / WRITING PAGE STYLES
+     Designed to feel like a focused writing environment —
+     wide, minimal, distraction-free.
+  ============================================================ */
+
+
+  /* ── PAGE LAYOUT ───────────────────────────────────────────
+     Wider than the auth card pages (max 780px) to give the
+     textarea room to breathe. Centred with top padding.
+  ────────────────────────────────────────────────────────── */
+  .write-page {
+    width: 100%;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+    animation: fadeUp 0.65s ease both;
+  }
+
+
+  /* ── BACK LINK ─────────────────────────────────────────────
+     Small navigation breadcrumb back to the blog post.
+  ────────────────────────────────────────────────────────── */
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 500;
+    margin-bottom: 2rem;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--accent); }
+  .back-link::before { content: '←'; }
+
+
+  /* ── PAGE HEADER ───────────────────────────────────────────
+     Shows which blog post you're writing content for.
+  ────────────────────────────────────────────────────────── */
+  .write-eyebrow {
+    display: inline-block;
+    background: rgba(240, 165, 0, 0.1);
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    padding: 0.28rem 0.85rem;
+    border-radius: 99px;
+    margin-bottom: 0.9rem;
+    border: 1px solid rgba(240, 165, 0, 0.2);
+  }
+
+  .write-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  .write-hint {
+    color: var(--muted);
+    font-size: 0.88rem;
+    margin-bottom: 2rem;
+  }
+
+
+  /* ── WRITING CARD ──────────────────────────────────────────
+     The form lives inside a card for visual containment.
+  ────────────────────────────────────────────────────────── */
+  .write-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem 2.2rem 2.2rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  }
+
+  /* Hide Django's generated label ("Text:") — the page
+     header already makes it clear what the field is for */
+  .write-form label {
+    display: none;
+  }
+
+  /* ── TEXTAREA ──────────────────────────────────────────────
+     The main writing area. Large, dark, with a gold focus ring.
+     min-height gives plenty of room; users can resize further.
+  ────────────────────────────────────────────────────────── */
+  .write-form textarea {
+    width: 100%;
+    min-height: 340px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem 1.3rem;
+    color: var(--text);
+
+    /* Writing-friendly typography */
+    font-size: 1.05rem;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.85;
+
+    resize: vertical;      /* let writers make it taller if needed */
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    display: block;
+    margin-bottom: 0;
+  }
+  /* Gold glow when actively writing */
+  .write-form textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(240, 165, 0, 0.1);
+  }
+
+  /* Placeholder text colour */
+  .write-form textarea::placeholder {
+    color: var(--muted);
+    opacity: 0.6;
+  }
+
+
+  /* ── TOOLBAR ROW ───────────────────────────────────────────
+     Sits below the textarea. Character hint on the left,
+     submit button on the right.
+  ────────────────────────────────────────────────────────── */
+  .write-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1.2rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  /* Small writing tip on the left */
+  .write-tip {
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+  .write-tip span {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* Submit button — gold pill, consistent with the rest of the site */
+  .write-submit {
+    background: var(--accent) !important;
+    color: #0f1117 !important;
+    font-weight: 700;
+    font-size: 0.95rem;
+    font-family: 'DM Sans', sans-serif;
+    border: none;
+    border-radius: 99px;
+    padding: 0.75rem 1.8rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 18px rgba(240, 165, 0, 0.28);
+    white-space: nowrap;
+  }
+  .write-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(240, 165, 0, 0.44);
+  }
+
+  /* Validation errors from Django */
+  .write-form .errorlist {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+  }
+  .write-form .errorlist li {
+    font-size: 0.82rem;
+    color: #e05c5c;
+  }
+
+</style>
+{% endblock extra_css %}
+
+
 {% block content %}
-<h2>{{ blog_headline }}</h2>
 
-<p>Write the content of your post here</p>
+  <div class="write-page">
 
-<form action="{% url 'blogs:add_each_content' blog_headline.id %}" method="post">
-    {% csrf_token %}
-    {{ form.as_div }}
-    <button name="submit">Add this post</button>
+    <!-- Back to the blog post page -->
+    <a href="{% url 'blogs:blog_content' blog_headline.id %}" class="back-link">
+      Back to post
+    </a>
 
-</form>
+    <!-- Page header — shows which blog you're writing for -->
+    <span class="write-eyebrow">✦ New Entry</span>
+    <h1 class="write-title">{{ blog_headline }}</h1>
+    <p class="write-hint">Add a new entry to this post. Each entry is timestamped automatically.</p>
 
+    <!-- Writing card -->
+    <div class="write-card">
+      <form action="{% url 'blogs:add_each_content' blog_headline.id %}" method="post" class="write-form">
+        {% csrf_token %}
+
+        <!-- Django renders the textarea here.
+             The label is hidden via CSS since the page header
+             already explains what to write. -->
+        {{ form.as_div }}
+
+        <!-- Toolbar: tip on the left, submit on the right -->
+        <div class="write-toolbar">
+          <p class="write-tip">
+            Tip: Press <span>Enter</span> twice to start a new paragraph.
+          </p>
+          <button type="submit" name="submit" class="write-submit">
+            Add this entry →
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
 
 {% endblock content %}

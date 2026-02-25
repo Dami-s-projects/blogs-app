@@ -1,16 +1,194 @@
 {% extends 'blogs/base.html' %}
 
+{% block title %}Edit Entry — {{ connected_headline }} — Blogs App{% endblock title %}
+
+{% block extra_css %}
+<style>
+
+  /* ============================================================
+     EDIT ENTRY PAGE STYLES
+     Identical writing environment to add_content.html but with
+     an amber "editing mode" indicator to remind the user they're
+     modifying existing content, not writing something new.
+  ============================================================ */
+
+  .write-page {
+    width: 100%;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+    animation: fadeUp 0.65s ease both;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 500;
+    margin-bottom: 2rem;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--accent); }
+  .back-link::before { content: '←'; }
+
+  /* Eyebrow pill — amber tint to signal "edit mode" */
+  .write-eyebrow {
+    display: inline-block;
+    background: rgba(224, 92, 92, 0.1);  /* red-amber for editing */
+    color: #e05c5c;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    padding: 0.28rem 0.85rem;
+    border-radius: 99px;
+    margin-bottom: 0.9rem;
+    border: 1px solid rgba(224, 92, 92, 0.25);
+  }
+
+  .write-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  .write-hint {
+    color: var(--muted);
+    font-size: 0.88rem;
+    margin-bottom: 2rem;
+  }
+
+  /* Card wrapper */
+  .write-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem 2.2rem 2.2rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  }
+
+  /* Hide Django's auto-generated "Text:" label */
+  .write-form label { display: none; }
+
+  /* Textarea — pre-filled with existing content */
+  .write-form textarea {
+    width: 100%;
+    min-height: 340px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem 1.3rem;
+    color: var(--text);
+    font-size: 1.05rem;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.85;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    display: block;
+  }
+  /* Red-tinted focus ring — reinforces "editing" state */
+  .write-form textarea:focus {
+    border-color: #e05c5c;
+    box-shadow: 0 0 0 3px rgba(224, 92, 92, 0.1);
+  }
+
+  /* Toolbar: discard link on the left, save button on the right */
+  .write-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1.2rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  /* "Discard changes" link — subtle so it doesn't tempt accidental clicks */
+  .discard-link {
+    font-size: 0.82rem;
+    color: var(--muted);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .discard-link:hover { color: #e05c5c; }
+
+  /* Save button — gold pill, same as rest of the site */
+  .write-submit {
+    background: var(--accent) !important;
+    color: #0f1117 !important;
+    font-weight: 700;
+    font-size: 0.95rem;
+    font-family: 'DM Sans', sans-serif;
+    border: none;
+    border-radius: 99px;
+    padding: 0.75rem 1.8rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 18px rgba(240, 165, 0, 0.28);
+    white-space: nowrap;
+  }
+  .write-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(240, 165, 0, 0.44);
+  }
+
+  .write-form .errorlist {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+  }
+  .write-form .errorlist li {
+    font-size: 0.82rem;
+    color: #e05c5c;
+  }
+
+</style>
+{% endblock extra_css %}
+
+
 {% block content %}
-<h2>{{ connected_headline }}</h2>
 
-<p>You can edit the post here</p>
+  <div class="write-page">
 
-<form action="{% url 'blogs:edit_entry' content.id %}" method="post">
-    {% csrf_token %}
-    {{ form.as_div }}
-    <button name="submit">Save changes</button>
+    <!-- Back to the blog post -->
+    <a href="{% url 'blogs:blog_content' connected_headline.id %}" class="back-link">
+      Back to post
+    </a>
 
-</form>
+    <!-- Red eyebrow pill signals "you're editing, not creating" -->
+    <span class="write-eyebrow">✎ Editing Entry</span>
+    <h1 class="write-title">{{ connected_headline }}</h1>
+    <p class="write-hint">Make your changes below. Your edits will replace the current entry.</p>
 
+    <div class="write-card">
+      <form action="{% url 'blogs:edit_entry' content.id %}" method="post" class="write-form">
+        {% csrf_token %}
+
+        <!-- Django pre-fills the textarea with the existing entry text -->
+        {{ form.as_div }}
+
+        <div class="write-toolbar">
+          <!-- Discard link — goes back without saving -->
+          <a href="{% url 'blogs:blog_content' connected_headline.id %}" class="discard-link">
+            ✕ Discard changes
+          </a>
+
+          <button type="submit" name="submit" class="write-submit">
+            Save Changes →
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
 
 {% endblock content %}
