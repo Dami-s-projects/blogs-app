@@ -81,7 +81,20 @@ body {
   gap: 8rem;
   margin-left: auto;
 }
-
+@media (max-width: 768px) {
+  .site-header .d-flex {
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .nav-masthead {
+    gap: 1rem;
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+}
 /* Override Bootstrap's default nav-link colour */
 .nav-masthead .nav-link {
   color: var(--muted);
@@ -131,7 +144,8 @@ body {
    We keep it from Bootstrap's example but restrict max-width.
 ---------------------------------------------------------------- */
 .cover-container {
-  max-width: 860px;
+  max-width: 960px;
+  text-align: left !important;
 }
 
 
@@ -179,14 +193,14 @@ body {
    Use: <a href="..." class="btn-gold">Label →</a>
 ---------------------------------------------------------------- */
 .btn-gold {
-  display: inline-block;
-  background: var(--accent);
-  color: #0f1117;
-  font-weight: 700;
+  display: inline-block !important;
+  background: var(--accent) !important;
+  color: #0f1117 !important;
+  font-weight: 700 !important;
   font-size: 0.95rem;
   padding: 0.8rem 2rem;
   border-radius: 99px;
-  text-decoration: none;
+  text-decoration: none !important;
   transition: transform 0.2s, box-shadow 0.2s;
   box-shadow: 0 4px 18px rgba(240, 165, 0, 0.28);
   border: none;
