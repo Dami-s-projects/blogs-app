@@ -1,46 +1,260 @@
 {% extends 'blogs/base.html' %}
 
+{% block title %}Home — Blogs App{% endblock title %}
+
 {% block extra_css %}
-
-
 <style>
-main {
-  background-color: #2c3034;
-  border-radius: 10px;
-  padding: 2rem;
-}
+
+  /* ============================================================
+     HOME PAGE STYLES
+     These only apply to the homepage — all global styles
+     (navbar, footer, fonts, colours) live in cover.css instead.
+  ============================================================ */
+
+
+  /* ── HERO SECTION ──────────────────────────────────────────
+     Full-width section that centres the welcome card.
+     The ::before pseudo-element adds a soft radial glow
+     behind the card for visual depth — purely decorative.
+  ────────────────────────────────────────────────────────── */
+  .hero {
+    display: grid;
+    place-items: center;   /* centres the card both ways */
+    min-height: 52vh;
+    padding: 3.5rem 1rem;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  /* Decorative gold glow in the background */
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 580px;
+    height: 580px;
+    background: radial-gradient(circle, rgba(240, 165, 0, 0.07) 0%, transparent 70%);
+    top: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;   /* never blocks clicks */
+  }
+
+  /* The card itself */
+  .hero-card {
+    background: var(--surface);      /* dark card bg from cover.css variable */
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3.5rem 3rem;
+    text-align: center;
+    max-width: 660px;
+    width: 100%;
+    position: relative;
+    box-shadow: 0 32px 70px rgba(0, 0, 0, 0.45);
+
+    /* fade-up class defined in cover.css handles the entrance animation */
+  }
+
+  /* Small gold pill label above the title */
+  .hero-eyebrow {
+    display: inline-block;
+    background: rgba(240, 165, 0, 0.1);
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    padding: 0.3rem 0.9rem;
+    border-radius: 99px;
+    margin-bottom: 1.4rem;
+    border: 1px solid rgba(240, 165, 0, 0.2);
+  }
+
+  /* Main page heading — Playfair Display for elegance */
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    /* clamp() = responsive: smallest 2rem, scales, max 3rem */
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 0.9rem;
+    color: #fff;
+  }
+  /* "Blogs App" highlighted in gold */
+  .hero-title span {
+    color: var(--accent);
+  }
+
+  /* Subtitle below the heading */
+  .hero-sub {
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.75;
+    max-width: 440px;
+    margin: 0 auto 2rem;
+    font-weight: 300;
+  }
+
+  /* CTA button — uses the shared .btn-gold class from cover.css */
+
+
+  /* ── LATEST POSTS SECTION ──────────────────────────────────
+     Sits below the hero. Delayed fade-up via .fade-up-delay
+     so it animates in slightly after the hero card.
+  ────────────────────────────────────────────────────────── */
+  .latest {
+    width: 100%;
+    max-width: 660px;
+    margin: 0 auto;
+    padding: 2.5rem 1rem 4rem;
+  }
+
+  /* Section label: "LATEST POSTS" with a gold bar prefix */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    color: var(--muted);
+    margin-bottom: 1.2rem;
+  }
+  /* The gold bar before the label text */
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  /* Stack of blog post rows */
+  .blog-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  /* Individual blog post row — the entire row is a link */
+  .blog-item {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.95rem 1.3rem;
+    text-decoration: none;
+    color: var(--text);
+    transition: background 0.2s, border-color 0.2s, transform 0.18s;
+  }
+  /* Hover: slide right + gold border glow */
+  .blog-item:hover {
+    background: var(--surface2);
+    border-color: rgba(240, 165, 0, 0.3);
+    transform: translateX(5px);
+    color: var(--text);   /* prevent Bootstrap link colour override */
+  }
+
+  /* Small gold dot at left edge of each row */
+  .blog-dot {
+    width: 7px;
+    height: 7px;
+    background: var(--accent);
+    border-radius: 50%;
+    flex-shrink: 0;   /* never squishes even with long titles */
+  }
+
+  /* Blog post title text */
+  .blog-item-title {
+    font-size: 0.93rem;
+    font-weight: 400;
+    text-align: left;
+  }
+
+  /* Right-side "›" arrow — pushed far right by margin-left: auto */
+  .blog-arrow {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: 1.1rem;
+    transition: color 0.2s;
+    flex-shrink: 0;
+  }
+  /* Arrow turns gold when the row is hovered */
+  .blog-item:hover .blog-arrow {
+    color: var(--accent);
+  }
+
+  /* Message when no blogs have been posted yet */
+  .blog-empty {
+    color: var(--muted);
+    font-size: 0.93rem;
+    padding: 0.75rem 0;
+    text-align: left;
+  }
+
 </style>
 {% endblock extra_css %}
 
+
 {% block content %}
-  <main class="px-3 mt-auto">
-    <h1>Welcome to Blogs App</h1>
-    <p class="lead">Here you can create your blog posts and update blogs at your convenience.</p>
-    <p class="lead">
-            <a href="{% url 'blogs:blog_topics' %}" class="btn btn-lg btn-light fw-bold border-white bg-white">Blogs</a>
-        </p>
-</main>
-<section class="px-3 mt-4 mb-auto">
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <p>Check out the latest posted blogs here: </p>
 
-  <ul class="list-unstyled">
-    {% for each_headline in blog_headlines|slice:"3" %}
-      <li><a href="{% url 'blogs:blog_content' each_headline.id %}" class="text-white">{{ each_headline }}</a></li>
-    {% empty %}
-      <li>No blog has been added yet.</li>
-    {% endfor %}
+  <!-- ============================================================
+       HERO SECTION
+       The welcome card. fade-up class (from cover.css) handles the
+       entrance animation — no extra JS needed.
+  ============================================================ -->
+  <section class="hero">
+    <div class="hero-card fade-up">
 
-  </ul>
+      <!-- Pill label above the title -->
+      <span class="hero-eyebrow">✦ Your writing space</span>
 
-</section>
+      <!-- Title — <span> makes "Blogs App" render in gold -->
+      <h1 class="hero-title">Welcome to <span>Blogs App</span></h1>
+
+      <!-- Short description -->
+      <p class="hero-sub">
+        Create, publish, and update your blog posts —
+        all in one place, at your own convenience.
+      </p>
+
+      <!-- CTA button — btn-gold is a shared class defined in cover.css -->
+      <a href="{% url 'blogs:blog_topics' %}" class="btn-gold">Browse Blogs →</a>
+
+    </div>
+  </section>
 
 
+  <!-- ============================================================
+       LATEST POSTS SECTION
+       Loops over the 3 most recent blog headlines.
+       blog_headlines is a queryset passed from your view's context.
+       fade-up-delay staggers this section's entrance after the hero.
+  ============================================================ -->
+  <section class="latest fade-up-delay">
 
+    <p class="section-label">Latest Posts</p>
 
+    <div class="blog-list">
+      {% for each_headline in blog_headlines|slice:"3" %}
+
+        <!-- Full-row clickable link for each blog post -->
+        <a href="{% url 'blogs:blog_content' each_headline.id %}" class="blog-item">
+          <span class="blog-dot"></span>
+          <span class="blog-item-title">{{ each_headline }}</span>
+          <span class="blog-arrow">›</span>
+        </a>
+
+      {% empty %}
+        <!-- Shown when the blog_headlines queryset is empty -->
+        <p class="blog-empty">No blogs posted yet — be the first!</p>
+      {% endfor %}
+    </div>
+
+  </section>
 
 {% endblock content %}
