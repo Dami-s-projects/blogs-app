@@ -1,37 +1,376 @@
 {% extends 'blogs/base.html' %}
 
+{% block title %}{{ blog_headline }} — Blogs App{% endblock title %}
+
+{% block extra_css %}
+<style>
+
+  /* ============================================================
+     BLOG CONTENT / READING PAGE STYLES
+  ============================================================ */
+
+
+  /* ── PAGE LAYOUT ───────────────────────────────────────────
+     Narrow reading column centred on the page.
+     Max-width of 720px is the sweet spot for comfortable
+     line lengths — not too wide, not too cramped.
+  ────────────────────────────────────────────────────────── */
+  .reading-page {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 6rem;
+  }
+
+
+  /* ── BACK LINK ─────────────────────────────────────────────
+     Small breadcrumb at the top so readers can navigate back.
+  ────────────────────────────────────────────────────────── */
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 500;
+    margin-bottom: 2.2rem;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--accent); }
+  .back-link::before {
+    content: '←';
+    font-size: 0.9rem;
+  }
+
+
+  /* ── POST HEADER ───────────────────────────────────────────
+     Large serif title + author/action row beneath it.
+  ────────────────────────────────────────────────────────── */
+  .post-header {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+    animation: fadeUp 0.65s ease both;
+  }
+
+  /* Eyebrow label above the title */
+  .post-eyebrow {
+    display: inline-block;
+    background: rgba(240, 165, 0, 0.1);
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    padding: 0.28rem 0.85rem;
+    border-radius: 99px;
+    margin-bottom: 1.1rem;
+    border: 1px solid rgba(240, 165, 0, 0.2);
+  }
+
+  /* Main blog title — large, impactful serif */
+  .post-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.9rem, 4.5vw, 2.8rem);
+    font-weight: 900;
+    line-height: 1.2;
+    color: #fff;
+    margin-bottom: 1.2rem;
+  }
+
+  /* Author + "Add content" button row */
+  .post-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .post-author {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--muted);
+    font-size: 0.88rem;
+  }
+
+  /* Circular avatar placeholder with the author's initial */
+  .author-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #e05c5c);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #0f1117;
+    flex-shrink: 0;
+  }
+
+  .author-name { color: var(--text); font-weight: 500; }
+
+  /* "Add content" button — only shown to the post owner */
+  .btn-add-content {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: 1.5px solid var(--accent);
+    color: var(--accent);
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.45rem 1rem;
+    border-radius: 99px;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+  }
+  .btn-add-content:hover {
+    background: var(--accent);
+    color: #0f1117;
+  }
+
+
+  /* ── CONTENT ENTRIES ───────────────────────────────────────
+     Each entry is a card with a timestamp and the body text.
+     Multiple entries stack vertically with a connecting
+     timeline line on the left.
+  ────────────────────────────────────────────────────────── */
+  .entries-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;                /* gap managed by the entry itself */
+    position: relative;
+  }
+
+  /* Vertical timeline line running down the left side */
+  .entries-list::before {
+    content: '';
+    position: absolute;
+    left: 11px;            /* centred on the timeline dot */
+    top: 24px;
+    bottom: 24px;
+    width: 1px;
+    background: var(--border);
+  }
+
+  /* Individual entry */
+  .entry {
+    display: flex;
+    gap: 1.5rem;
+    padding-bottom: 2.5rem;
+    animation: fadeUp 0.6s ease both;
+    position: relative;
+  }
+  /* Stagger each entry's animation so they cascade in */
+  .entry:nth-child(1) { animation-delay: 0.05s; }
+  .entry:nth-child(2) { animation-delay: 0.12s; }
+  .entry:nth-child(3) { animation-delay: 0.19s; }
+  .entry:nth-child(4) { animation-delay: 0.26s; }
+  .entry:nth-child(5) { animation-delay: 0.33s; }
+
+  /* Timeline dot — sits on the left rail */
+  .entry-dot {
+    width: 23px;
+    height: 23px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 2px solid var(--accent);
+    flex-shrink: 0;
+    margin-top: 2px;
+    position: relative;
+    z-index: 1;            /* sits above the timeline line */
+  }
+
+  /* The content side of the entry */
+  .entry-body {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem 1.7rem;
+    transition: border-color 0.2s;
+  }
+  .entry-body:hover {
+    border-color: rgba(240, 165, 0, 0.2);
+  }
+
+  /* Timestamp at the top of each entry */
+  .entry-date {
+    font-size: 0.76rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent);
+    margin-bottom: 0.9rem;
+  }
+
+  /* The actual blog text — optimised for reading comfort */
+  .entry-text {
+    font-size: 1.02rem;
+    line-height: 1.85;         /* generous line height for readability */
+    color: #c8c8d8;            /* slightly softer than full white */
+    font-weight: 300;
+  }
+  .entry-text p {
+    margin-bottom: 1rem;
+  }
+  .entry-text p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* "Content added by" attribution line */
+  .entry-attribution {
+    margin-top: 1.1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  /* "Edit post" link — subtle, right-aligned */
+  .entry-actions {
+    margin-top: 0.9rem;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .edit-link {
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .edit-link:hover { color: var(--accent); }
+  .edit-link::before { content: '✎'; }
+
+
+  /* ── EMPTY STATE ───────────────────────────────────────────
+     Shown when the post exists but has no content entries yet.
+  ────────────────────────────────────────────────────────── */
+  .empty-content {
+    text-align: center;
+    padding: 3rem 2rem;
+    border: 1.5px dashed var(--border);
+    border-radius: 16px;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+</style>
+{% endblock extra_css %}
+
+
 {% block content %}
-<br>
-<br>
-<h2>{{ blog_headline }}</h2>
 
-{% if blog_headline.owner == user %}
-  <p><a href="{% url 'blogs:add_each_content' blog_headline.id %}">Add content</a></p>
-{% endif %}
-<ul>
-    {% for each_content in blog_content %}
-    <li>
-        <p>{{ each_content.date_added|date:'M d, Y H:i' }}</p>
-        <p>{{ each_content.text|linebreaks}}</p>
+  <div class="reading-page">
+
+    <!-- ============================================================
+         BACK NAVIGATION
+         Simple link back to all blogs.
+    ============================================================ -->
+    <a href="{% url 'blogs:blog_topics' %}" class="back-link">All Blogs</a>
+
+
+    <!-- ============================================================
+         POST HEADER
+         Title, eyebrow label, author info, and owner actions.
+    ============================================================ -->
+    <header class="post-header">
+
+      <span class="post-eyebrow">✦ Blog Post</span>
+
+      <!-- The blog headline/title from the database -->
+      <h1 class="post-title">{{ blog_headline }}</h1>
+
+      <div class="post-meta-row">
+
+        <!-- Author avatar + name -->
+        <div class="post-author">
+          <!-- Avatar shows the first letter of the owner's username -->
+          <div class="author-avatar">
+            {{ blog_headline.owner.username|first|upper }}
+          </div>
+          <div>
+            <span class="author-name">{{ blog_headline.owner.username }}</span>
+          </div>
+        </div>
+
+        <!-- "Add content" button — only visible to the post owner -->
         {% if blog_headline.owner == user %}
-        <p><a href="{% url 'blogs:edit_entry' each_content.id %}">Edit post</a></p>
+          <a href="{% url 'blogs:add_each_content' blog_headline.id %}" class="btn-add-content">
+            + Add Content
+          </a>
         {% endif %}
-    </li>
-    {% empty %}
-    <li>
-        <p>No content has been added to this post</p>
-    </li>
-    {% endfor %}
 
-</ul>
+      </div>
+    </header>
 
 
+    <!-- ============================================================
+         CONTENT ENTRIES
+         Each entry in blog_content gets its own timeline card.
+         The vertical line + dots create a timeline effect.
+    ============================================================ -->
+    <div class="entries-list">
+      {% for each_content in blog_content %}
 
+        <div class="entry">
 
+          <!-- Timeline dot on the left rail -->
+          <div class="entry-dot"></div>
 
+          <!-- Entry card on the right -->
+          <div class="entry-body">
 
+            <!-- Timestamp -->
+            <p class="entry-date">{{ each_content.date_added|date:'M d, Y · H:i' }}</p>
 
+            <!-- Blog text — linebreaks converts \n to <br>/<p> tags -->
+            <div class="entry-text">
+              {{ each_content.text|linebreaks }}
+            </div>
 
+            <!-- "Content added by: Username" attribution -->
+            {% if each_content.author %}
+              <p class="entry-attribution">Content added by: {{ each_content.author }}</p>
+            {% endif %}
 
+            <!-- Edit link — only visible to the post owner -->
+            {% if blog_headline.owner == user %}
+              <div class="entry-actions">
+                <a href="{% url 'blogs:edit_entry' each_content.id %}" class="edit-link">
+                  Edit entry
+                </a>
+              </div>
+            {% endif %}
+
+          </div>
+        </div>
+
+      {% empty %}
+
+        <!-- Empty state when no content entries exist yet -->
+        <div class="empty-content">
+          <p>No content has been added to this post yet.</p>
+          {% if blog_headline.owner == user %}
+            <br>
+            <a href="{% url 'blogs:add_each_content' blog_headline.id %}" class="btn-gold" style="margin-top:0.5rem;">
+              Add the first entry →
+            </a>
+          {% endif %}
+        </div>
+
+      {% endfor %}
+    </div>
+
+  </div>
 
 {% endblock content %}
