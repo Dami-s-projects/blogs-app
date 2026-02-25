@@ -1,14 +1,159 @@
 {% extends 'blogs/base.html' %}
 
+{% block title %}New Post — Blogs App{% endblock title %}
+
+{% block extra_css %}
+<style>
+
+  /* ============================================================
+     ADD HEADLINE PAGE STYLES
+     Reuses the same card pattern as the register page for
+     visual consistency across all form pages on the site.
+  ============================================================ */
+
+  /* Centres the card on the page */
+  .auth-page {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 3.5rem 1rem 5rem;
+    width: 100%;
+  }
+
+  /* The dark rounded card */
+  .auth-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2.8rem 2.5rem;
+    width: 100%;
+    max-width: 520px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+    animation: fadeUp 0.65s ease both;
+  }
+
+  /* Page title */
+  .auth-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 0.4rem;
+    line-height: 1.2;
+  }
+  .auth-title span { color: var(--accent); }
+
+  /* Subtitle */
+  .auth-subtitle {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+  }
+
+  /* Spacing between Django's generated <div> field wrappers */
+  .auth-form > div { margin-bottom: 1.4rem; }
+
+  /* Field labels */
+  .auth-form label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--muted);
+    margin-bottom: 0.45rem;
+  }
+
+  /* Text inputs */
+  .auth-form input[type="text"] {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.72rem 1rem;
+    color: var(--text);
+    font-size: 0.95rem;
+    font-family: 'DM Sans', sans-serif;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+  /* Gold glow on focus */
+  .auth-form input[type="text"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(240, 165, 0, 0.12);
+  }
+
+  /* Validation error messages from Django */
+  .auth-form .errorlist {
+    list-style: none;
+    padding: 0;
+    margin: 0.4rem 0 0;
+  }
+  .auth-form .errorlist li {
+    font-size: 0.82rem;
+    color: #e05c5c;
+  }
+
+  /* Full-width gold submit button */
+  .auth-submit {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.88rem;
+    font-size: 1rem;
+    background: var(--accent) !important;
+    color: #0f1117 !important;
+    font-weight: 700;
+    font-family: 'DM Sans', sans-serif;
+    border: none;
+    border-radius: 99px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 18px rgba(240, 165, 0, 0.28);
+  }
+  .auth-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(240, 165, 0, 0.44);
+  }
+
+  /* Cancel link below the button */
+  .auth-footer-text {
+    text-align: center;
+    margin-top: 1.4rem;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+  .auth-footer-text a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .auth-footer-text a:hover { text-decoration: underline; }
+
+</style>
+{% endblock extra_css %}
+
+
 {% block content %}
-<p>What is the title of your Blog?</p>
-<form action="{% url 'blogs:add_headline' %}" method="post">
-    {% csrf_token %}
-    {{ form.as_div }}
-    <button name="submit">Add this topic</button>
 
+  <div class="auth-page">
+    <div class="auth-card">
 
+      <!-- Card heading -->
+      <h1 class="auth-title">New Post<span>.</span></h1>
+      <p class="auth-subtitle">What is the title of your Blog?</p>
 
-</form>
+      <form action="{% url 'blogs:add_headline' %}" method="post" class="auth-form">
+        {% csrf_token %}
+        {{ form.as_div }}
+        <button type="submit" name="submit" class="auth-submit">Create Post →</button>
+      </form>
+
+      <!-- Cancel goes back to all blogs -->
+      <p class="auth-footer-text">
+        <a href="{% url 'blogs:blog_topics' %}">← Cancel, go back to All Blogs</a>
+      </p>
+
+    </div>
+  </div>
 
 {% endblock content %}
