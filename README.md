@@ -1,4 +1,4 @@
-# Blogs App 📝
+<h1 align="center">Blogs App 📝</h1>
 
 A full-stack blog web application built with Django, where users can create, publish, and manage their own blog posts.
 
@@ -6,7 +6,10 @@ A full-stack blog web application built with Django, where users can create, pub
 [Coming soon]
 
 ## 📸 Screenshots
-![Blogs app](screenshots/blogs_app.png)
+<p align="center">
+  <img src="screenshots/blogs_app.png" width="200"/>
+</p>
+
 ![Homepage](screenshots/homepage.png)
 ![Blog contents](screenshots/blog_contents.png)
 
