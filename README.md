@@ -6,9 +6,9 @@ A full-stack blog web application built with Django, where users can create, pub
 [Coming soon]
 
 ## 📸 Screenshots
-![Blogs app](screenshots\blogs_app.png)
-![Homepage](screenshots\homepage.png)
-![Blog contents](screenshots\blog_contents.png)
+![Blogs app](screenshots/blogs_app.png)
+![Homepage](screenshots/homepage.png)
+![Blog contents](screenshots/blog_contents.png)
 
 
 ## ✨ Features
