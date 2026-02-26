@@ -13,7 +13,7 @@ def index(request):
     blog_headlines=BlogPostTitle.objects.order_by('-date_added')
     context={"blog_headlines":blog_headlines}
 
-    return render(request,'blogs\index.html',context)
+    return render(request,'blogs/index.html',context)
 
 def display_headlines(request):
     """Display topics for blog_headlines template"""
@@ -23,7 +23,7 @@ def display_headlines(request):
     blog_headlines=BlogPostTitle.objects.order_by('-date_added')
     context={"blog_headlines":blog_headlines}
 
-    return render(request,'blogs\\blog_topics.html',context)
+    return render(request,'blogs/blog_topics.html',context)
 
 def display_contents(request,blogposttitle_id):
     """Display content for each blog post"""
@@ -35,7 +35,7 @@ def display_contents(request,blogposttitle_id):
     # template rendering
     context={'blog_headline':blog_headline,'blog_content':blog_content}
     #now return the template for the content
-    return render(request,'blogs\\blog_content.html',context)
+    return render(request,'blogs/blog_content.html',context)
 
 
 @login_required
