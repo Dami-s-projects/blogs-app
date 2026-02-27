@@ -1,8 +1,26 @@
+# Python
+*.pyc
+__pycache__/
+*.py[cod]
+
+# Virtual Environment
+blog_env/
+venv/
+env/
+.venv/
+
+# Django
 db.sqlite3
+staticfiles/
+media/
 
-blogs/__pycache__/views.cpython-312.pyc
-Blog/__pycache__/settings.cpython-312.pyc
+# Environment
+.env
 
+# IDE
+.vscode/
+.idea/
 
-
-
+# OS
+.DS_Store
+Thumbs.db
