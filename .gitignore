@@ -11,3 +11,4 @@ blogs/__pycache__/forms.cpython-312.pyc
 blogs/__pycache__/models.cpython-312.pyc
 blogs/__pycache__/urls.cpython-312.pyc
 blogs/__pycache__/views.cpython-312.pyc
+db.sqlite3
