@@ -16,15 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
-from django.views.generic import TemplateView
+from django.http import HttpResponse
+
+def robots_txt(request):
+    content = "User-agent: *\nDisallow: /admin/\nAllow: /\n"
+    return HttpResponse(content, content_type="text/plain")
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('blogs.urls')),
     path('accounts/',include('accounts.urls')),
     # Robots.txt for search engine crawling
-    path('robots.txt', TemplateView.as_view(
-        template_name='robots.txt',
-        content_type='text/plain'
-    )),
+    path('robots.txt', robots_txt),
 ]
