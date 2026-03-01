@@ -3,7 +3,7 @@
 A full-stack blog web application built with Django, where users can create, publish, and manage their own blog posts.
 
 ## 🔗 Live Demo
-[Coming soon]
+https://www.blogs-app.com
 
 ## 📸 Screenshots
 <p align="center">
