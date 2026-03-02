@@ -32,8 +32,8 @@ https://www.blogs-app.com
 
 **1. Clone the repository:**
 ```bash
-git clone https://github.com/yourusername/blogs-app.git
-cd blogs-app
+git clone https://github.com/Dami-s-projects/blogs-app.git
+cd Blog
 ```
 
 **2. Create a virtual environment:**
