@@ -1,4 +1,4 @@
-# Python
+﻿# Python
 *.pyc
 __pycache__/
 *.py[cod]
@@ -24,3 +24,4 @@ media/
 # OS
 .DS_Store
 Thumbs.db
+blogs/__pycache__/views.cpython-312.pyc
