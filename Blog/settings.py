@@ -137,3 +137,4 @@ LOGIN_URL = 'accounts:login'
 
 #static root for railway deployment
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
